@@ -126,6 +126,29 @@ function renderHub(data) {
   statusMessage.hidden = true;
 }
 
+function setFormBusy(form, busy, savingButton) {
+  form.querySelectorAll('button, select').forEach((control) => { control.disabled = busy; });
+  if (!savingButton) return;
+  if (busy) {
+    savingButton.dataset.originalText = savingButton.textContent;
+    savingButton.textContent = 'Saving…';
+  } else {
+    savingButton.textContent = savingButton.dataset.originalText || savingButton.textContent;
+  }
+}
+
+function showAttendanceConfirmation(name, response) {
+  const banner = $('#attendance-confirmation');
+  const message = response === 'present'
+    ? `${name}, you are confirmed for this Sunday. Thank you!`
+    : `${name}, your absence has been recorded. Thank you for letting us know.`;
+  banner.innerHTML = `<span aria-hidden="true">✓</span><strong>${escapeHtml(message)}</strong>`;
+  banner.className = `confirmation-banner ${response}`;
+  banner.hidden = false;
+  clearTimeout(showAttendanceConfirmation.timer);
+  showAttendanceConfirmation.timer = setTimeout(() => { banner.hidden = true; }, 9000);
+}
+
 async function loadHub() {
   setBusy('Loading the upcoming worship plan…');
   dashboard.hidden = true;
@@ -161,15 +184,22 @@ $('#attendance-form').addEventListener('click', (event) => {
 
 $('#attendance-form').addEventListener('submit', async (event) => {
   event.preventDefault();
+  const form = event.currentTarget;
+  const savingButton = event.submitter;
   const personId = $('#choir-person').value;
-  const response = event.submitter?.value || event.currentTarget.dataset.response;
+  const personName = $('#choir-person').selectedOptions[0]?.textContent || 'Your';
+  const response = savingButton?.value || form.dataset.response;
   if (!personId || !response || !hubData?.plan?.id) return;
+  setFormBusy(form, true, savingButton);
   setBusy('Saving your attendance response…');
   try {
     await apiPost('attendance', { planId: hubData.plan.id, personId, response });
     await loadHub();
+    showAttendanceConfirmation(personName, response);
   } catch (error) {
     setError(error.message);
+  } finally {
+    setFormBusy(form, false, savingButton);
   }
 });
 

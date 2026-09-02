@@ -16,7 +16,7 @@ An installable worship-plan and attendance hub for Versailles United Methodist C
 
 Create a Google Sheet for the Hub. The setup function creates these tabs:
 
-- Attendance: Plan ID, Person ID, Response, Updated
+- Attendance: Plan ID, Person ID, Person Name, Response, Updated
 - Assignments: Plan ID, Role, Person ID, Person Name, Updated
 
 ## Apps Script deployment

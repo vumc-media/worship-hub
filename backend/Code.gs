@@ -33,8 +33,9 @@ function doPost(e) {
 
 function setupWorshipHub() {
   const ss = SpreadsheetApp.openById(property_('SPREADSHEET_ID'));
-  ensureSheet_(ss, 'Attendance', ['Plan ID', 'Person ID', 'Response', 'Updated']);
+  ensureSheet_(ss, 'Attendance', ['Plan ID', 'Person ID', 'Person Name', 'Response', 'Updated']);
   ensureSheet_(ss, 'Assignments', ['Plan ID', 'Role', 'Person ID', 'Person Name', 'Updated']);
+  ensureAttendanceSchema_(ss.getSheetByName('Attendance'));
 }
 
 function getHub_(serviceKey) {
@@ -95,21 +96,23 @@ function getChoir_() {
 
 function getAttendance_(planId) {
   const sheet = sheet_('Attendance');
+  ensureAttendanceSchema_(sheet);
   if (sheet.getLastRow() < 2) return [];
-  return sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues()
+  return sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues()
     .filter(function (row) { return String(row[0]) === String(planId); })
-    .map(function (row) { return { personId: String(row[1]), response: String(row[2]) }; });
+    .map(function (row) { return { personId: String(row[1]), personName: String(row[2]), response: String(row[3]) }; });
 }
 
 function saveAttendance_(p) {
   requireFields_(p, ['planId', 'personId', 'response']);
   if (['present', 'absent'].indexOf(p.response) === -1) throw new Error('Invalid attendance response.');
-  assertChoirMember_(p.personId);
+  const person = assertChoirMember_(p.personId);
   const sheet = sheet_('Attendance');
-  const values = sheet.getLastRow() > 1 ? sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues() : [];
+  ensureAttendanceSchema_(sheet);
+  const values = sheet.getLastRow() > 1 ? sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues() : [];
   const index = values.findIndex(function (row) { return String(row[0]) === String(p.planId) && String(row[1]) === String(p.personId); });
-  const row = [String(p.planId), String(p.personId), p.response, new Date()];
-  if (index >= 0) sheet.getRange(index + 2, 1, 1, 4).setValues([row]);
+  const row = [String(p.planId), String(p.personId), person.name, p.response, new Date()];
+  if (index >= 0) sheet.getRange(index + 2, 1, 1, 5).setValues([row]);
   else sheet.appendRow(row);
   return { ok: true };
 }
@@ -162,6 +165,23 @@ function ensureSheet_(ss, name, headers) {
   if (!sheet) sheet = ss.insertSheet(name);
   if (!sheet.getLastRow()) sheet.appendRow(headers);
   sheet.setFrozenRows(1);
+}
+
+function ensureAttendanceSchema_(sheet) {
+  if (!sheet) throw new Error('Attendance sheet is missing.');
+  if (sheet.getRange(1, 3).getValue() !== 'Person Name') {
+    sheet.insertColumnAfter(2);
+    sheet.getRange(1, 3).setValue('Person Name');
+    if (sheet.getLastRow() > 1) {
+      const namesById = {};
+      getChoir_().forEach(function (person) { namesById[String(person.id)] = person.name; });
+      const ids = sheet.getRange(2, 2, sheet.getLastRow() - 1, 1).getValues();
+      sheet.getRange(2, 3, ids.length, 1).setValues(ids.map(function (row) {
+        return [namesById[String(row[0])] || ''];
+      }));
+    }
+  }
+  sheet.getRange(1, 1, 1, 5).setValues([['Plan ID', 'Person ID', 'Person Name', 'Response', 'Updated']]);
 }
 
 function property_(name) {

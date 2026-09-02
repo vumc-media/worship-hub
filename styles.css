@@ -138,3 +138,22 @@ h2 { font-family: inherit; font-weight: 850; letter-spacing: -.025em; }
   .header-tagline { font-size: .72rem; }
   .service-switcher { margin-top: -25px; }
 }
+
+[hidden] { display: none !important; }
+
+.confirmation-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 2px solid #15936f;
+  border-radius: 12px;
+  background: #e1f5ee;
+  color: #075b43;
+  box-shadow: 0 8px 18px rgba(7,91,67,.10);
+}
+.confirmation-banner.absent { border-color: #c9796f; background: var(--coral-soft); color: #843b34; }
+.confirmation-banner span { display: grid; flex: 0 0 34px; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: #15936f; color: white; font-weight: 900; }
+.confirmation-banner.absent span { background: #b45a50; }
+button:disabled, select:disabled { cursor: wait; opacity: .62; }

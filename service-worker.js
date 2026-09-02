@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vumc-worship-hub-v3';
+const CACHE_NAME = 'vumc-worship-hub-v5';
 const APP_FILES = [
   './',
   './index.html',
