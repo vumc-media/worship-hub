@@ -116,7 +116,7 @@ h2 { font-family: inherit; font-weight: 850; letter-spacing: -.025em; }
 }
 
 .yes-button, .primary-button { background: linear-gradient(120deg, #0d7890, #1599a9); box-shadow: 0 7px 14px rgba(13,120,144,.18); }
-.no-button { background: #fff; color: var(--red); border: 2px solid #d28a8a !important; }
+.response-buttons .no-button { background: linear-gradient(120deg, #b94f4b, #d76659); color: #fff; border: 0; box-shadow: 0 7px 14px rgba(185,79,75,.18); }
 .attendance-summary div:nth-child(1) { background: #e1f5ee; }
 .attendance-summary div:nth-child(2) { background: var(--coral-soft); }
 .attendance-summary div:nth-child(3) { background: var(--gold-soft); }
