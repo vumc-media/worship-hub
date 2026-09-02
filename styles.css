@@ -12,3 +12,129 @@ footer{padding:28px 20px calc(28px + env(safe-area-inset-bottom));background:var
 .serving-panel{grid-column:1/-1}.serving-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}.serving-list>div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border-radius:10px;background:var(--green-100)}.serving-list strong,.serving-list div span{display:block}.serving-list div span{color:var(--muted);font-size:.83rem}
 @media(max-width:720px){.serving-list{grid-template-columns:1fr}.serving-panel{grid-column:auto}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Universal worship theme */
+:root {
+  --green-950: #082945;
+  --green-800: #0d4561;
+  --green-700: #126879;
+  --green-100: #e2f4f7;
+  --gold: #f4b544;
+  --gold-soft: #fff2d8;
+  --coral: #f26f5b;
+  --coral-soft: #fff0ed;
+  --sky: #55c3d6;
+  --ink: #142b3b;
+  --muted: #526875;
+  --canvas: #f4f8fa;
+  --line: #d5e3e8;
+  --red: #b44949;
+  --shadow: 0 16px 38px rgba(8, 41, 69, .11);
+}
+
+body {
+  background:
+    radial-gradient(circle at 8% 22%, rgba(85,195,214,.13), transparent 28rem),
+    radial-gradient(circle at 92% 42%, rgba(242,111,91,.10), transparent 26rem),
+    var(--canvas);
+}
+
+.site-header {
+  position: relative;
+  min-height: 260px;
+  overflow: hidden;
+  padding: 0;
+  background:
+    linear-gradient(90deg, rgba(6,31,56,.98) 0%, rgba(6,31,56,.88) 37%, rgba(6,31,56,.18) 72%),
+    url("assets/worship-header-v2.webp") center right / cover no-repeat;
+}
+
+.header-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: min(1060px, calc(100% - 48px));
+  margin: auto;
+  color: white;
+}
+
+.brand-mark {
+  flex: 0 0 76px;
+  width: 76px;
+  height: 76px;
+  border: 3px solid rgba(255,255,255,.75);
+  border-radius: 22px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.22);
+}
+
+.church-name { color: #d9f3f7; letter-spacing: .05em; text-transform: uppercase; }
+.site-header h1 { font-family: inherit; font-size: clamp(2.2rem, 6vw, 3.5rem); font-weight: 850; letter-spacing: -.035em; }
+.header-tagline { margin: 5px 0 0; color: #ffd889; font-size: 1rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+h2 { font-family: inherit; font-weight: 850; letter-spacing: -.025em; }
+
+.service-switcher {
+  max-width: 720px;
+  margin: -31px auto 28px;
+  position: relative;
+  z-index: 2;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 18px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 16px 36px rgba(8,41,69,.16);
+  backdrop-filter: blur(12px);
+}
+
+.service-tab { border: 0; background: transparent; color: var(--muted); }
+.service-tab.active {
+  border-color: transparent;
+  background: linear-gradient(120deg, #0d4561, #126879);
+  color: white;
+  box-shadow: 0 8px 18px rgba(13,69,97,.22);
+}
+.service-tab:last-child.active { background: linear-gradient(120deg, #d25955, #f08a58); }
+
+.hero-card {
+  overflow: hidden;
+  border: 0;
+  border-left: 7px solid var(--sky);
+  background: linear-gradient(110deg, #fff 58%, #e9f8fa);
+}
+
+.panel { border: 0; }
+.attendance-panel { border-top: 6px solid var(--sky); }
+.call-panel { border-top: 6px solid var(--coral); }
+.serving-panel { border-top: 6px solid var(--gold); }
+.plan-panel { border-top: 6px solid #287ca0; }
+
+.attendance-total {
+  min-width: 86px;
+  padding: 14px 12px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #e2f4f7, #f6fdff);
+}
+
+.yes-button, .primary-button { background: linear-gradient(120deg, #0d7890, #1599a9); box-shadow: 0 7px 14px rgba(13,120,144,.18); }
+.no-button { background: #fff; color: var(--red); border: 2px solid #d28a8a !important; }
+.attendance-summary div:nth-child(1) { background: #e1f5ee; }
+.attendance-summary div:nth-child(2) { background: var(--coral-soft); }
+.attendance-summary div:nth-child(3) { background: var(--gold-soft); }
+.assignment-card { background: linear-gradient(120deg, var(--coral-soft), #fff8e9); }
+.assignment-check { background: var(--coral); }
+.serving-list > div { background: linear-gradient(135deg, #f5fbfd, #e6f4f7); }
+.plan-items li > div:before { background: linear-gradient(145deg, #dff3f7, #fff2d8); }
+.notice-panel { border-left: 6px solid var(--gold); background: linear-gradient(110deg, #fff, #fff8e9); }
+.install-panel { border-left: 6px solid var(--coral); background: linear-gradient(110deg, #fff, var(--coral-soft)); }
+.secondary-button { border-color: var(--coral); color: #a8443d; }
+
+@media (max-width: 720px) {
+  .site-header { min-height: 220px; background-position: 58% center; }
+  .site-header:after { content: ""; position: absolute; inset: 0; background: rgba(3,27,48,.18); pointer-events: none; }
+  .header-content { z-index: 1; width: calc(100% - 36px); }
+  .brand-mark { flex-basis: 62px; width: 62px; height: 62px; border-radius: 18px; }
+  .church-name { max-width: 245px; font-size: .68rem; }
+  .site-header h1 { font-size: 2.25rem; }
+  .header-tagline { font-size: .72rem; }
+  .service-switcher { margin-top: -25px; }
+}
