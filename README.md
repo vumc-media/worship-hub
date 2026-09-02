@@ -1,28 +1,54 @@
-# VUMC Worship Team Hub
+# VUMC Worship Hub
 
-An installable, mobile-first worship hub for Versailles United Methodist Church.
+An installable worship-plan and attendance hub for Versailles United Methodist Church.
 
-## Included
+## Version 2
 
-- Permanent links to the next public 9:30 Traditional and 10:30 Contemporary worship plans
-- Senior-friendly layout with large controls and high contrast
-- Add-to-Home-Screen guidance for iPhone, iPad, and Android
-- Offline app shell through a service worker
-- GitHub Pages-ready relative paths
+- Renders the upcoming 9:30 and 10:30 plans in the Hub's own accessible design
+- Pulls the active Choir roster from a Planning Center People list
+- Saves Present/Absent responses for each upcoming plan
+- Shows shared Present, Absent, and No response totals
+- Allows one active choir member to volunteer for the Call to Worship
+- Keeps a Church Center link available as a fallback
+- Keeps all PCO credentials in Google Apps Script Properties
 
-## Publish with GitHub Pages
+## Google Sheet
 
-1. Open the repository **Settings**.
-2. Select **Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Select the `main` branch and `/ (root)` folder.
-5. Save.
+Create a Google Sheet for the Hub. The setup function creates these tabs:
 
-The site will publish at `https://vumc-media.github.io/worship-hub/`.
+- Attendance: Plan ID, Person ID, Response, Updated
+- Assignments: Plan ID, Role, Person ID, Person Name, Updated
 
-## Planning Center service types
+## Apps Script deployment
 
-- 9:30 Traditional: `1525584`
-- 10:30 Contemporary: `1061239`
+1. In the Sheet, open **Extensions > Apps Script**.
+2. Replace Code.gs with backend/Code.gs.
+3. Open **Project Settings > Script Properties** and add:
 
-The Church Center `plans/after/today/public` links automatically resolve to the next public plan.
+| Property | Value |
+|---|---|
+| PCO_APP_ID | Existing Planning Center application ID |
+| PCO_SECRET | Existing Planning Center secret |
+| SPREADSHEET_ID | ID from this Sheet's URL |
+| CHOIR_FIELD_ID | 1107643 (the Ministry Involvement > Choir field) |
+| TRADITIONAL_SERVICE_TYPE | 1525584 |
+| CONTEMPORARY_SERVICE_TYPE | 1061239 |
+
+4. Run setupWorshipHub once and approve access.
+5. Choose **Deploy > New deployment > Web app**.
+6. Execute as **Me** and allow access to **Anyone**.
+7. Copy the deployed URL ending in /exec.
+8. Paste it into config.js as the apiUrl.
+
+Never put PCO credentials in config.js or any GitHub file.
+
+## Choir roster
+
+The backend pulls profiles whose Ministry Involvement > Choir Boolean field is Yes.
+The current field ID is 1107643; no additional People list is required.
+
+## GitHub Pages
+
+Publish the main branch from / (root). The custom domain is:
+
+https://worship.versaillesumc.org

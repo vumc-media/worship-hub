@@ -1,8 +1,9 @@
-const CACHE_NAME = 'vumc-worship-hub-v1';
+const CACHE_NAME = 'vumc-worship-hub-v2';
 const APP_FILES = [
   './',
   './index.html',
   './styles.css',
+  './config.js',
   './app.js',
   './manifest.webmanifest',
   './icons/icon.svg',

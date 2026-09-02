@@ -2,7 +2,7 @@
   "name": "VUMC Worship Team Hub",
   "short_name": "Worship Hub",
   "description": "Worship plans and team information for Versailles United Methodist Church.",
-  "id": "/worship-hub/",
+  "id": "/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
