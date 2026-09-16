@@ -12,6 +12,7 @@ const SERVICES = {
 
 let activeService = 'traditional';
 let hubData = null;
+let currentLoad = 0;
 
 const $ = (selector) => document.querySelector(selector);
 const dashboard = $('#dashboard');
@@ -41,15 +42,45 @@ function setError(message) {
   statusMessage.innerHTML = `${escapeHtml(message)} <a href="${SERVICES[activeService].fallback}">Open the plan in Church Center</a>.`;
 }
 
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function fetchWithTimeout(url, options = {}, timeout = 25000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function apiGet(action, params = {}) {
   if (!CONFIG.apiUrl) throw new Error('The data connection has not been added yet.');
   const url = new URL(CONFIG.apiUrl);
   url.search = new URLSearchParams({ action, ...params });
-  const response = await fetch(url, { redirect: 'follow' });
-  if (!response.ok) throw new Error('The Worship Hub could not reach its data service.');
-  const payload = await response.json();
-  if (!payload.ok) throw new Error(payload.error || 'The data service returned an error.');
-  return payload;
+  let lastError;
+
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetchWithTimeout(url, { redirect: 'follow', cache: 'no-store' });
+      if (!response.ok) throw new Error('The Worship Hub could not reach its data service.');
+      const payload = await response.json();
+      if (!payload.ok) throw new Error(payload.error || 'The data service returned an error.');
+      return payload;
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) {
+        setBusy(attempt === 1
+          ? 'The worship plan is taking a little longer. Trying again…'
+          : 'Still connecting. One more try…');
+        await wait(attempt * 900);
+      }
+    }
+  }
+
+  throw lastError || new Error('The Worship Hub could not load the plan.');
 }
 
 async function apiPost(action, fields) {
@@ -149,13 +180,20 @@ function showAttendanceConfirmation(name, response) {
   showAttendanceConfirmation.timer = setTimeout(() => { banner.hidden = true; }, 9000);
 }
 
-async function loadHub() {
+async function loadHub(forceRefresh = false) {
+  const loadId = ++currentLoad;
   setBusy('Loading the upcoming worship plan…');
   dashboard.hidden = true;
   try {
-    const data = await apiGet('hub', { service: activeService, _: Date.now() });
+    const data = await apiGet('hub', {
+      service: activeService,
+      refresh: forceRefresh ? '1' : '0',
+      _: Date.now()
+    });
+    if (loadId !== currentLoad) return;
     renderHub(data);
   } catch (error) {
+    if (loadId !== currentLoad) return;
     setError(error.message);
     $('#plan-title').textContent = SERVICES[activeService].label;
     $('#plan-subtitle').textContent = 'The customized display will appear here when the secure data connection is deployed.';
@@ -174,7 +212,7 @@ document.querySelectorAll('.service-tab').forEach((button) => {
   });
 });
 
-$('#refresh-button').addEventListener('click', loadHub);
+$('#refresh-button').addEventListener('click', () => loadHub(true));
 
 $('#attendance-form').addEventListener('click', (event) => {
   if (event.target.matches('button[name="response"]')) {
