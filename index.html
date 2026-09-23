@@ -4,8 +4,8 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173f35"><meta name="description" content="Worship plans and team attendance for Versailles United Methodist Church.">
   <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Worship Hub">
-  <link rel="manifest" href="manifest.webmanifest?v=8"><link rel="icon" href="icons/icon.svg?v=8" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icons/icon-192.png?v=8"><link rel="stylesheet" href="styles.css?v=8">
+  <link rel="manifest" href="manifest.webmanifest?v=9"><link rel="icon" href="icons/icon.svg?v=9" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png?v=9"><link rel="stylesheet" href="styles.css?v=9">
   <title>VUMC Worship Hub</title>
 </head>
 <body>
@@ -18,21 +18,21 @@
   </header>
   <main id="main">
     <nav class="service-switcher" aria-label="Choose a worship service">
-      <button class="service-tab active" type="button" data-service="traditional" aria-pressed="true"><span>9:30 AM</span> Traditional</button>
-      <button class="service-tab" type="button" data-service="contemporary" aria-pressed="false"><span>10:30 AM</span> Contemporary</button>
+      <button class="service-tab active" type="button" data-service="traditional" aria-pressed="true"><span>9:30 AM</span> Worship</button>
+      <button class="service-tab" type="button" data-service="contemporary" aria-pressed="false"><span>10:30 AM</span> Worship</button>
     </nav>
     <section class="hero-card" aria-labelledby="plan-title"><div><p class="eyebrow" id="service-label">Upcoming worship</p><h2 id="plan-title">Loading this Sunday’s plan…</h2><p id="plan-subtitle" class="muted">Please wait while the Worship Hub retrieves the latest information.</p></div><button id="refresh-button" class="icon-button" type="button" aria-label="Refresh worship information">↻</button></section>
     <p id="status-message" class="status-message" role="status">Connecting to the Worship Hub…</p>
     <div id="dashboard" class="dashboard" hidden>
       <section id="attendance-section" class="panel attendance-panel" aria-labelledby="attendance-title">
-        <div class="section-heading"><div><p class="eyebrow">Chancel Choir</p><h2 id="attendance-title">Will you be here Sunday?</h2></div><div class="attendance-total" aria-live="polite"><strong id="confirmed-count">0</strong><span>confirmed</span></div></div>
+        <div class="section-heading"><div><p class="eyebrow" id="attendance-group-label">Worship attendance</p><h2 id="attendance-title">Will you be here Sunday?</h2></div><div class="attendance-total" aria-live="polite"><strong id="confirmed-count">0</strong><span>confirmed</span></div></div>
         <form id="attendance-form" class="response-form">
           <label for="choir-person">Choose your name</label><select id="choir-person" name="personId" required><option value="">Select your name…</option></select>
           <div class="response-buttons"><button class="yes-button" type="submit" name="response" value="present">Yes, I’ll be there</button><button class="no-button" type="submit" name="response" value="absent">No, I’ll be absent</button></div>
         </form>
         <div id="attendance-confirmation" class="confirmation-banner" role="status" aria-live="polite" hidden></div>
-        <div class="attendance-summary" aria-label="Choir attendance responses"><div><strong id="present-count">0</strong><span>Present</span></div><div><strong id="absent-count">0</strong><span>Absent</span></div><div><strong id="pending-count">0</strong><span>No response</span></div></div>
-        <details class="roster-details"><summary>See choir responses</summary><div id="roster-list" class="roster-list"></div></details>
+        <div class="attendance-summary" aria-label="Worship attendance responses"><div><strong id="present-count">0</strong><span>Present</span></div><div><strong id="absent-count">0</strong><span>Absent</span></div><div><strong id="pending-count">0</strong><span>No response</span></div></div>
+        <details class="roster-details"><summary>See responses</summary><div id="roster-list" class="roster-list"></div></details>
       </section>
       <section id="call-section" class="panel call-panel" aria-labelledby="call-title">
         <p class="eyebrow">Sunday leadership</p><h2 id="call-title">Call to Worship</h2>
@@ -54,6 +54,6 @@
   </main>
   <footer><p>Versailles United Methodist Church</p><a href="https://versaillesumc.churchcenter.com/home">Open Church Center</a></footer>
   <dialog id="install-dialog" aria-labelledby="dialog-title"><div class="dialog-content"><button id="close-dialog" class="close-button" type="button" aria-label="Close">×</button><h2 id="dialog-title">Add to your Home Screen</h2><div id="install-instructions"></div></div></dialog>
-  <script src="config.js?v=8"></script><script src="app.js?v=8" defer></script>
+  <script src="config.js?v=9"></script><script src="app.js?v=9" defer></script>
 </body>
 </html>

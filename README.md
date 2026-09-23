@@ -12,6 +12,14 @@ An installable worship-plan and attendance hub for Versailles United Methodist C
 - Keeps a Church Center link available as a fallback
 - Keeps all PCO credentials in Google Apps Script Properties
 
+## Service-aware behavior
+
+- Uses neutral 9:30 Worship and 10:30 Worship tabs instead of assuming a fixed style.
+- Treats a 10:30 plan as Combined Worship when there is no 9:30 plan for the same date.
+- Shows worship attendance for the normal 9:30 service and for a 10:30 combined service.
+- Shows the Call to Worship signup only when that item exists in the active plan.
+- Skips a service with no plan for the earliest upcoming worship date instead of showing an error.
+
 ## Google Sheet
 
 Create a Google Sheet for the Hub. The setup function creates these tabs:
@@ -31,6 +39,7 @@ Create a Google Sheet for the Hub. The setup function creates these tabs:
 | PCO_SECRET | Existing Planning Center secret |
 | SPREADSHEET_ID | ID from this Sheet's URL |
 | CHOIR_FIELD_ID | 1107643 (the Ministry Involvement > Choir field) |
+| ATTENDANCE_FIELD_ID | Optional separate Boolean field for everyone who should report worship attendance; defaults to CHOIR_FIELD_ID |
 | TRADITIONAL_SERVICE_TYPE | 1525584 |
 | CONTEMPORARY_SERVICE_TYPE | 1061239 |
 
@@ -42,10 +51,9 @@ Create a Google Sheet for the Hub. The setup function creates these tabs:
 
 Never put PCO credentials in config.js or any GitHub file.
 
-## Choir roster
+## Worship attendance roster
 
-The backend pulls profiles whose Ministry Involvement > Choir Boolean field is Yes.
-The current field ID is 1107643; no additional People list is required.
+By default, the backend uses profiles whose Ministry Involvement > Choir Boolean field is Yes, so the current setup continues to work unchanged. To separate service attendance from choir membership, create a Boolean field in Planning Center for everyone who should report availability and save its field ID as `ATTENDANCE_FIELD_ID` in Apps Script Properties.
 
 ## GitHub Pages
 

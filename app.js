@@ -1,11 +1,11 @@
 const CONFIG = window.WORSHIP_HUB_CONFIG || {};
 const SERVICES = {
   traditional: {
-    label: '9:30 Traditional Worship',
+    label: '9:30 Worship',
     fallback: 'https://versaillesumc.churchcenter.com/services/service_types/1525584/plans/after/today/public'
   },
   contemporary: {
-    label: '10:30 Contemporary Worship',
+    label: '10:30 Worship',
     fallback: 'https://versaillesumc.churchcenter.com/services/service_types/1061239/plans/after/today/public'
   }
 };
@@ -105,28 +105,30 @@ function renderPlan(data) {
     : '<li class="empty-row">No plan items have been published yet.</li>';
 }
 
-function populatePeople(choir) {
-  const options = (choir || []).map((person) => `<option value="${escapeHtml(person.id)}">${escapeHtml(person.name)}</option>`).join('');
+function populatePeople(participants) {
+  const options = (participants || []).map((person) => `<option value="${escapeHtml(person.id)}">${escapeHtml(person.name)}</option>`).join('');
   $('#choir-person').innerHTML = '<option value="">Select your name…</option>' + options;
   $('#call-person').innerHTML = '<option value="">Select your name…</option>' + options;
 }
 
 function renderAttendance(data) {
-  const choir = data.choir || [];
+  const participants = data.participants || data.choir || [];
   const responses = new Map((data.attendance || []).map((entry) => [String(entry.personId), entry.response]));
-  const present = choir.filter((person) => responses.get(String(person.id)) === 'present');
-  const absent = choir.filter((person) => responses.get(String(person.id)) === 'absent');
-  const pending = choir.filter((person) => !responses.has(String(person.id)));
+  const present = participants.filter((person) => responses.get(String(person.id)) === 'present');
+  const absent = participants.filter((person) => responses.get(String(person.id)) === 'absent');
+  const pending = participants.filter((person) => !responses.has(String(person.id)));
 
   $('#confirmed-count').textContent = present.length;
   $('#present-count').textContent = present.length;
   $('#absent-count').textContent = absent.length;
   $('#pending-count').textContent = pending.length;
-  $('#roster-list').innerHTML = choir.map((person) => {
+  $('#attendance-group-label').textContent = data.participation?.groupLabel || 'Worship attendance';
+  $('#attendance-title').textContent = data.participation?.question || 'Will you be here Sunday?';
+  $('#roster-list').innerHTML = participants.map((person) => {
     const response = responses.get(String(person.id)) || 'pending';
     const label = response === 'present' ? 'Present' : response === 'absent' ? 'Absent' : 'No response';
     return `<div><span>${escapeHtml(person.displayName || person.name)}</span><span class="response-status ${response}">${label}</span></div>`;
-  }).join('') || '<p>No choir members were returned by the Choir list.</p>';
+  }).join('') || '<p>No names were returned for this worship team.</p>';
 }
 
 function renderCallToWorship(assignment) {
@@ -147,12 +149,12 @@ function renderServing(people) {
 function renderHub(data) {
   hubData = data;
   renderPlan(data);
-  populatePeople(data.choir);
+  populatePeople(data.participants || data.choir);
   renderAttendance(data);
   renderCallToWorship(data.callToWorship);
   renderServing(data.serving);
-  $('#attendance-section').hidden = activeService !== 'traditional';
-  $('#call-section').hidden = activeService !== 'traditional';
+  $('#attendance-section').hidden = !data.participation?.attendanceEnabled;
+  $('#call-section').hidden = !data.participation?.callToWorshipEnabled;
   dashboard.hidden = false;
   statusMessage.hidden = true;
 }
@@ -180,7 +182,23 @@ function showAttendanceConfirmation(name, response) {
   showAttendanceConfirmation.timer = setTimeout(() => { banner.hidden = true; }, 9000);
 }
 
-async function loadHub(forceRefresh = false) {
+function selectService(service) {
+  activeService = service;
+  document.querySelectorAll('.service-tab').forEach((tab) => {
+    const selected = tab.dataset.service === service;
+    tab.classList.toggle('active', selected);
+    tab.setAttribute('aria-pressed', String(selected));
+  });
+}
+
+function setServiceAvailability(service, available) {
+  const tab = document.querySelector(`.service-tab[data-service="${service}"]`);
+  if (tab) tab.hidden = !available;
+  const visibleTabs = document.querySelectorAll('.service-tab:not([hidden])').length;
+  $('.service-switcher').classList.toggle('single-service', visibleTabs === 1);
+}
+
+async function loadHub(forceRefresh = false, allowFallback = true) {
   const loadId = ++currentLoad;
   setBusy('Loading the upcoming worship plan…');
   dashboard.hidden = true;
@@ -191,6 +209,17 @@ async function loadHub(forceRefresh = false) {
       _: Date.now()
     });
     if (loadId !== currentLoad) return;
+    if (data.available === false) {
+      setServiceAvailability(activeService, false);
+      const fallbackService = activeService === 'traditional' ? 'contemporary' : 'traditional';
+      if (allowFallback) {
+        selectService(fallbackService);
+        await loadHub(forceRefresh, false);
+        return;
+      }
+      throw new Error('No upcoming worship plan is available.');
+    }
+    setServiceAvailability(activeService, true);
     renderHub(data);
   } catch (error) {
     if (loadId !== currentLoad) return;
@@ -202,12 +231,7 @@ async function loadHub(forceRefresh = false) {
 
 document.querySelectorAll('.service-tab').forEach((button) => {
   button.addEventListener('click', () => {
-    activeService = button.dataset.service;
-    document.querySelectorAll('.service-tab').forEach((tab) => {
-      const selected = tab === button;
-      tab.classList.toggle('active', selected);
-      tab.setAttribute('aria-pressed', String(selected));
-    });
+    selectService(button.dataset.service);
     loadHub();
   });
 });
