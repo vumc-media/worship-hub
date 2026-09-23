@@ -107,7 +107,7 @@ function renderPlan(data) {
 
 function populatePeople(participants) {
   const options = (participants || []).map((person) => `<option value="${escapeHtml(person.id)}">${escapeHtml(person.name)}</option>`).join('');
-  $('#choir-person').innerHTML = '<option value="">Select your name…</option>' + options;
+  $('#attendance-person').innerHTML = '<option value="">Select your name…</option>' + options;
   $('#call-person').innerHTML = '<option value="">Select your name…</option>' + options;
 }
 
@@ -248,14 +248,14 @@ $('#attendance-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
   const savingButton = event.submitter;
-  const personId = $('#choir-person').value;
-  const personName = $('#choir-person').selectedOptions[0]?.textContent || 'Your';
+  const personId = $('#attendance-person').value;
+  const personName = $('#attendance-person').selectedOptions[0]?.textContent || 'Your';
   const response = savingButton?.value || form.dataset.response;
-  if (!personId || !response || !hubData?.plan?.id) return;
+  if (!personId || !response || !hubData?.attendanceKey) return;
   setFormBusy(form, true, savingButton);
   setBusy('Saving your attendance response…');
   try {
-    await apiPost('attendance', { planId: hubData.plan.id, personId, response });
+    await apiPost('attendance', { attendanceKey: hubData.attendanceKey, personId, response });
     await loadHub();
     showAttendanceConfirmation(personName, response);
   } catch (error) {
