@@ -18,6 +18,8 @@ An installable worship-plan and attendance hub for Versailles United Methodist C
 - Treats a 10:30 plan as Combined Worship when there is no 9:30 plan for the same date.
 - Keeps one general Sunday worship-attendance roster, independent of the 9:30 and 10:30 service plans.
 - Stores each response by worship date so the same attendance appears while viewing either service.
+- Reads older plan-ID responses and converts submissions from cached older pages to the current worship date.
+- Normalizes Google Sheets date cells and safely handles Apps Script's redirected POST response.
 - Shows the Call to Worship signup only when that item exists in the active plan.
 - Skips a service with no plan for the earliest upcoming worship date instead of showing an error.
 

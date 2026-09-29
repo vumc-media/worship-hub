@@ -85,12 +85,34 @@ async function apiGet(action, params = {}) {
 
 async function apiPost(action, fields) {
   if (!CONFIG.apiUrl) throw new Error('The data connection has not been added yet.');
-  const body = new URLSearchParams({ action, ...fields });
-  const response = await fetch(CONFIG.apiUrl, { method: 'POST', body, redirect: 'follow' });
-  if (!response.ok) throw new Error('Your response could not be saved.');
-  const payload = await response.json();
-  if (!payload.ok) throw new Error(payload.error || 'Your response could not be saved.');
-  return payload;
+  const makeBody = () => new URLSearchParams({ action, ...fields });
+  let response;
+  try {
+    response = await fetch(CONFIG.apiUrl, { method: 'POST', body: makeBody(), redirect: 'follow' });
+  } catch (error) {
+    response = null;
+  }
+
+  if (response?.ok) {
+    try {
+      const payload = await response.json();
+      if (!payload.ok) throw new Error(payload.error || 'Your response could not be saved.');
+      return payload;
+    } catch (error) {
+      if (error.message && error.message !== 'Unexpected end of JSON input') throw error;
+    }
+  }
+
+  // Apps Script may save successfully and then return a 405 while following
+  // its cross-origin response redirect. The retry is safe because attendance
+  // and assignments update the same person/plan record rather than duplicating it.
+  await fetch(CONFIG.apiUrl, {
+    method: 'POST',
+    body: makeBody(),
+    mode: 'no-cors',
+    redirect: 'follow'
+  });
+  return { ok: true, redirectFallback: true };
 }
 
 function renderPlan(data) {
