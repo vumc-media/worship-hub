@@ -1,59 +1,299 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#173f35"><meta name="description" content="Worship plans and team attendance for Versailles United Methodist Church.">
-  <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Worship Hub">
-  <link rel="manifest" href="manifest.webmanifest?v=11"><link rel="icon" href="icons/icon.svg?v=11" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icons/icon-192.png?v=11"><link rel="stylesheet" href="styles.css?v=11">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f35">
+  <meta name="description" content="Worship plans, team attendance, and Call to Worship sign-ups for Versailles United Methodist Church.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Worship Hub">
+
+  <link rel="manifest" href="manifest.webmanifest?v=11">
+  <link rel="icon" href="icons/icon.svg?v=11" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png?v=11">
+  <link rel="stylesheet" href="styles.css?v=11">
+
   <title>VUMC Worship Hub</title>
 </head>
+
 <body>
   <a class="skip-link" href="#main">Skip to worship information</a>
+
   <header class="site-header">
     <div class="header-content">
       <img class="brand-mark" src="icons/icon.svg" alt="">
-      <div><p class="church-name">Versailles United Methodist Church</p><h1>Worship Hub</h1><p class="header-tagline">Plan. Prepare. Serve.</p></div>
+      <div>
+        <p class="church-name">Versailles United Methodist Church</p>
+        <h1>Worship Hub</h1>
+        <p class="header-tagline">Plan. Prepare. Serve.</p>
+      </div>
     </div>
   </header>
+
   <main id="main">
     <nav class="service-switcher" aria-label="Choose a worship service">
-      <button class="service-tab active" type="button" data-service="traditional" aria-pressed="true"><span>9:30 AM</span> Worship</button>
-      <button class="service-tab" type="button" data-service="contemporary" aria-pressed="false"><span>10:30 AM</span> Worship</button>
+      <button
+        class="service-tab active"
+        type="button"
+        data-service="traditional"
+        aria-pressed="true"
+      >
+        <span>9:30 AM</span> Worship
+      </button>
+
+      <button
+        class="service-tab"
+        type="button"
+        data-service="contemporary"
+        aria-pressed="false"
+      >
+        <span>10:30 AM</span> Worship
+      </button>
     </nav>
-    <section class="hero-card" aria-labelledby="plan-title"><div><p class="eyebrow" id="service-label">Upcoming worship</p><h2 id="plan-title">Loading this Sunday’s plan…</h2><p id="plan-subtitle" class="muted">Please wait while the Worship Hub retrieves the latest information.</p></div><button id="refresh-button" class="icon-button" type="button" aria-label="Refresh worship information">↻</button></section>
-    <p id="status-message" class="status-message" role="status">Connecting to the Worship Hub…</p>
+
+    <section class="hero-card" aria-labelledby="plan-title">
+      <div>
+        <p class="eyebrow" id="service-label">Upcoming worship</p>
+        <h2 id="plan-title">Loading this Sunday’s plan…</h2>
+        <p id="plan-subtitle" class="muted">
+          Please wait while the Worship Hub retrieves the latest information.
+        </p>
+      </div>
+
+      <button
+        id="refresh-button"
+        class="icon-button"
+        type="button"
+        aria-label="Refresh worship information"
+      >↻</button>
+    </section>
+
+    <p id="status-message" class="status-message" role="status">
+      Connecting to the Worship Hub…
+    </p>
+
     <div id="dashboard" class="dashboard" hidden>
-      <section id="attendance-section" class="panel attendance-panel" aria-labelledby="attendance-title">
-        <div class="section-heading"><div><p class="eyebrow" id="attendance-group-label">Sunday worship attendance</p><h2 id="attendance-title">Will you be present for worship this Sunday?</h2></div><div class="attendance-total" aria-live="polite"><strong id="confirmed-count">0</strong><span>confirmed</span></div></div>
+      <section
+        id="attendance-section"
+        class="panel attendance-panel"
+        aria-labelledby="attendance-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" id="attendance-group-label">
+              Sunday worship attendance
+            </p>
+            <h2 id="attendance-title">
+              Will you be present for worship this Sunday?
+            </h2>
+          </div>
+
+          <div class="attendance-total" aria-live="polite">
+            <strong id="confirmed-count">0</strong>
+            <span>confirmed</span>
+          </div>
+        </div>
+
         <form id="attendance-form" class="response-form">
-          <label for="attendance-person">Choose your name</label><select id="attendance-person" name="personId" required><option value="">Select your name…</option></select>
-          <div class="response-buttons"><button class="yes-button" type="submit" name="response" value="present">Yes, I’ll be there</button><button class="no-button" type="submit" name="response" value="absent">No, I’ll be absent</button></div>
+          <label for="attendance-person">Choose your name</label>
+          <select id="attendance-person" name="personId" required>
+            <option value="">Select your name…</option>
+          </select>
+
+          <div class="response-buttons">
+            <button
+              class="yes-button"
+              type="submit"
+              name="response"
+              value="present"
+            >Yes, I’ll be there</button>
+
+            <button
+              class="no-button"
+              type="submit"
+              name="response"
+              value="absent"
+            >No, I’ll be absent</button>
+          </div>
         </form>
-        <div id="attendance-confirmation" class="confirmation-banner" role="status" aria-live="polite" hidden></div>
-        <div class="attendance-summary" aria-label="Worship attendance responses"><div><strong id="present-count">0</strong><span>Present</span></div><div><strong id="absent-count">0</strong><span>Absent</span></div><div><strong id="pending-count">0</strong><span>No response</span></div></div>
-        <details class="roster-details"><summary>See responses</summary><div id="roster-list" class="roster-list"></div></details>
+
+        <div
+          id="attendance-confirmation"
+          class="confirmation-banner"
+          role="status"
+          aria-live="polite"
+          hidden
+        ></div>
+
+        <div
+          class="attendance-summary"
+          aria-label="Worship attendance responses"
+        >
+          <div>
+            <strong id="present-count">0</strong>
+            <span>Present</span>
+          </div>
+          <div>
+            <strong id="absent-count">0</strong>
+            <span>Absent</span>
+          </div>
+          <div>
+            <strong id="pending-count">0</strong>
+            <span>No response</span>
+          </div>
+        </div>
+
+        <details class="roster-details">
+          <summary>See responses</summary>
+          <div id="roster-list" class="roster-list"></div>
+        </details>
       </section>
-      <section id="call-section" class="panel call-panel" aria-labelledby="call-title">
-        <p class="eyebrow">Sunday leadership</p><h2 id="call-title">Call to Worship</h2>
-        <div id="call-filled" class="assignment-card" hidden><span class="assignment-check" aria-hidden="true">✓</span><div><small>Volunteer</small><strong id="call-name"></strong></div></div>
-        <form id="call-form" class="volunteer-form"><p>This Sunday still needs someone to lead the Call to Worship.</p><label for="call-person">Choose your name</label><select id="call-person" name="personId" required><option value="">Select your name…</option></select><button class="primary-button" type="submit">I’ll Volunteer</button></form>
+
+      <section
+        id="call-section"
+        class="panel call-panel"
+        aria-labelledby="call-title"
+      >
+        <p class="eyebrow">Sunday · 9:30 AM Worship</p>
+        <h2 id="call-title">Call to Worship</h2>
+
+        <div id="call-filled" class="assignment-card" hidden>
+          <span class="assignment-check" aria-hidden="true">✓</span>
+          <div>
+            <small>This Sunday’s volunteer</small>
+            <strong id="call-name"></strong>
+          </div>
+        </div>
+
+        <form id="call-form" class="volunteer-form">
+          <p>
+            Volunteer in advance to lead the Call to Worship.
+            Choose your name, then an available Sunday.
+          </p>
+
+          <label for="call-person">Choose your name</label>
+          <select id="call-person" name="personId" required>
+            <option value="">Select your name…</option>
+          </select>
+
+          <label for="call-date">Choose a Sunday</label>
+          <select
+            id="call-date"
+            name="worshipDate"
+            aria-describedby="call-availability"
+            required
+            disabled
+          >
+            <option value="">Loading available Sundays…</option>
+          </select>
+
+          <p id="call-availability" class="muted" role="status">
+            All dates are for the 9:30 AM service.
+            Booked Sundays will not appear in this list.
+          </p>
+
+          <button
+            id="call-submit"
+            class="primary-button"
+            type="submit"
+            disabled
+          >I’ll Volunteer</button>
+        </form>
+
+        <div
+          id="call-confirmation"
+          class="confirmation-banner"
+          role="status"
+          aria-live="polite"
+          hidden
+        ></div>
       </section>
-      <section class="panel serving-panel" aria-labelledby="serving-title">
-        <p class="eyebrow">Scheduled volunteers</p><h2 id="serving-title">Serving This Sunday</h2>
+
+      <section
+        class="panel serving-panel"
+        aria-labelledby="serving-title"
+      >
+        <p class="eyebrow">Scheduled volunteers</p>
+        <h2 id="serving-title">Serving This Sunday</h2>
         <div id="serving-list" class="serving-list"></div>
       </section>
-      <section class="panel plan-panel" aria-labelledby="order-title">
-        <div class="section-heading"><div><p class="eyebrow">Order of worship</p><h2 id="order-title">This Sunday’s Plan</h2></div><a id="pco-fallback" class="text-link" href="https://versaillesumc.churchcenter.com/services/service_types/1525584/plans/after/today/public">Open in Church Center</a></div>
+
+      <section
+        class="panel plan-panel"
+        aria-labelledby="order-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Order of worship</p>
+            <h2 id="order-title">This Sunday’s Plan</h2>
+          </div>
+
+          <a
+            id="pco-fallback"
+            class="text-link"
+            href="https://versaillesumc.churchcenter.com/services/service_types/1525584/plans/after/today/public"
+          >Open in Church Center</a>
+        </div>
+
         <ol id="plan-items" class="plan-items"></ol>
       </section>
     </div>
-    <section class="notice-panel" aria-labelledby="schedule-title"><div class="notice-icon" aria-hidden="true">♪</div><div><p class="eyebrow">Weekly schedule</p><h2 id="schedule-title">Chancel Choir Rehearsal</h2><p><strong>Wednesdays at 6:45 PM</strong><br>Choir Room 208-B</p></div></section>
-    <section class="install-panel" aria-labelledby="install-title"><div><p class="eyebrow">Keep it handy</p><h2 id="install-title">Add the Worship Hub to your phone</h2><p>Save this page to your Home Screen for one-tap access each week.</p></div><button id="install-button" class="secondary-button" type="button">Show Me How</button></section>
-    <p id="offline-message" class="offline-message" hidden>You are offline. Previously loaded information may still be visible.</p>
+
+    <section class="notice-panel" aria-labelledby="schedule-title">
+      <div class="notice-icon" aria-hidden="true">♪</div>
+      <div>
+        <p class="eyebrow">Weekly schedule</p>
+        <h2 id="schedule-title">Chancel Choir Rehearsal</h2>
+        <p>
+          <strong>Wednesdays at 6:45 PM</strong><br>
+          Choir Room 208-B
+        </p>
+      </div>
+    </section>
+
+    <section class="install-panel" aria-labelledby="install-title">
+      <div>
+        <p class="eyebrow">Keep it handy</p>
+        <h2 id="install-title">Add the Worship Hub to your phone</h2>
+        <p>
+          Save this page to your Home Screen for one-tap access each week.
+        </p>
+      </div>
+
+      <button
+        id="install-button"
+        class="secondary-button"
+        type="button"
+      >Show Me How</button>
+    </section>
+
+    <p id="offline-message" class="offline-message" hidden>
+      You are offline. Previously loaded information may still be visible.
+    </p>
   </main>
-  <footer><p>Versailles United Methodist Church</p><a href="https://versaillesumc.churchcenter.com/home">Open Church Center</a></footer>
-  <dialog id="install-dialog" aria-labelledby="dialog-title"><div class="dialog-content"><button id="close-dialog" class="close-button" type="button" aria-label="Close">×</button><h2 id="dialog-title">Add to your Home Screen</h2><div id="install-instructions"></div></div></dialog>
-  <script src="config.js?v=11"></script><script src="app.js?v=11" defer></script>
+
+  <footer>
+    <p>Versailles United Methodist Church</p>
+    <a href="https://versaillesumc.churchcenter.com/home">
+      Open Church Center
+    </a>
+  </footer>
+
+  <dialog id="install-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-content">
+      <button
+        id="close-dialog"
+        class="close-button"
+        type="button"
+        aria-label="Close"
+      >×</button>
+
+      <h2 id="dialog-title">Add to your Home Screen</h2>
+      <div id="install-instructions"></div>
+    </div>
+  </dialog>
+
+  <script src="config.js?v=11"></script>
+  <script src="app.js?v=12" defer></script>
 </body>
 </html>
