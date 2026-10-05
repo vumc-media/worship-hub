@@ -363,7 +363,102 @@ function renderCallDates(schedule) {
       ? 'All dates are for 9:30 AM. Booked Sundays are removed from this list.'
       : 'All Sundays in the next six months are currently booked.';
 
+  renderCallVolunteerList(schedule);
   updateCallControls();
+}
+
+function renderCallVolunteerList(schedule) {
+  let section = $('#call-volunteer-schedule');
+
+  if (!section) {
+    section = document.createElement('section');
+    section.id = 'call-volunteer-schedule';
+
+    section.setAttribute(
+      'aria-labelledby',
+      'call-volunteer-schedule-title'
+    );
+
+    section.style.marginTop = '24px';
+    $('#call-section').appendChild(section);
+  }
+
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(new Date());
+
+  const dateParts = Object.fromEntries(
+    parts.map((part) => [part.type, part.value])
+  );
+
+  const today =
+    dateParts.year + '-' +
+    dateParts.month + '-' +
+    dateParts.day;
+
+  const bookings = (schedule?.bookings || [])
+    .filter((booking) => {
+      return (
+        /^\d{4}-\d{2}-\d{2}$/.test(booking.date) &&
+        booking.date >= today &&
+        booking.personName
+      );
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const heading =
+    '<h3 id="call-volunteer-schedule-title">' +
+    'Upcoming Call to Worship Volunteers</h3>' +
+    '<p class="muted">' +
+    'Sunday · 9:30 AM — Reference for bulletin preparation.' +
+    '</p>';
+
+  if (!schedule) {
+    section.innerHTML =
+      heading +
+      '<p>The volunteer schedule could not be loaded. ' +
+      'Tap the refresh button to try again.</p>';
+    return;
+  }
+
+  if (!bookings.length) {
+    section.innerHTML =
+      heading +
+      '<p>No upcoming volunteers have signed up yet.</p>';
+    return;
+  }
+
+  const cellStyle =
+    'padding:12px 8px;' +
+    'text-align:left;' +
+    'vertical-align:top;' +
+    'border-bottom:1px solid currentColor;' +
+    'overflow-wrap:anywhere;';
+
+  section.innerHTML =
+    heading +
+    '<table aria-labelledby="call-volunteer-schedule-title" ' +
+    'style="width:100%;border-collapse:collapse;table-layout:fixed;">' +
+    '<thead><tr>' +
+    '<th scope="col" style="' + cellStyle + '">Sunday</th>' +
+    '<th scope="col" style="' + cellStyle + '">Volunteer</th>' +
+    '</tr></thead><tbody>' +
+    bookings.map((booking) => {
+      return (
+        '<tr>' +
+        '<td style="' + cellStyle + '">' +
+        escapeHtml(formatCallDate(booking.date)) +
+        '</td>' +
+        '<td style="' + cellStyle + '">' +
+        escapeHtml(booking.personName) +
+        '</td>' +
+        '</tr>'
+      );
+    }).join('') +
+    '</tbody></table>';
 }
 
 function renderCallToWorship(assignment) {
