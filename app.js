@@ -380,7 +380,7 @@ function renderCallVolunteerList(schedule) {
     );
 
     section.style.marginTop = '24px';
-    $('#call-section').appendChild(section);
+    $('#call-section').insertAdjacentElement('afterend', section);
   }
 
   const parts = new Intl.DateTimeFormat('en-US', {
@@ -399,24 +399,36 @@ function renderCallVolunteerList(schedule) {
     dateParts.month + '-' +
     dateParts.day;
 
-  const bookings = (schedule?.bookings || [])
+  const entries = [...(schedule?.bookings || [])];
+  const current = hubData?.callToWorship;
+  const currentDate = current?.date || hubData?.attendanceKey ||
+    String(hubData?.plan?.date || '').slice(0, 10);
+
+  // Older plan-based assignments may not yet appear in schedule.bookings.
+  if (activeService === 'traditional' && current?.personName &&
+      !entries.some((entry) => entry.date === currentDate &&
+        String(entry.personId) === String(current.personId))) {
+    entries.push({ ...current, date: currentDate });
+  }
+
+  const bookings = entries
     .filter((booking) => {
       return (
         /^\d{4}-\d{2}-\d{2}$/.test(booking.date) &&
         booking.date >= today &&
-        booking.personName
+        (booking.personName || booking.personId)
       );
     })
     .sort((a, b) => a.date.localeCompare(b.date));
 
   const heading =
     '<h3 id="call-volunteer-schedule-title">' +
-    'Upcoming Call to Worship Volunteers</h3>' +
+    'Call to Worship Volunteer Schedule</h3>' +
     '<p class="muted">' +
-    'Sunday · 9:30 AM — Reference for bulletin preparation.' +
+    'Check here anytime to see when you or another volunteer is scheduled. All dates are at 9:30 AM.' +
     '</p>';
 
-  if (!schedule) {
+  if (!schedule && !bookings.length) {
     section.innerHTML =
       heading +
       '<p>The volunteer schedule could not be loaded. ' +
@@ -438,8 +450,14 @@ function renderCallVolunteerList(schedule) {
     'border-bottom:1px solid currentColor;' +
     'overflow-wrap:anywhere;';
 
+  const roster = hubData?.participants || hubData?.choir || [];
+
   section.innerHTML =
     heading +
+    (!schedule
+      ? '<p>The full schedule could not be loaded. Only the current volunteer is shown. Tap refresh to try again.</p>'
+      : '') +
+    `<p><strong>${bookings.length} upcoming ${bookings.length === 1 ? 'booking' : 'bookings'}</strong></p>` +
     '<table aria-labelledby="call-volunteer-schedule-title" ' +
     'style="width:100%;border-collapse:collapse;table-layout:fixed;">' +
     '<thead><tr>' +
@@ -453,7 +471,13 @@ function renderCallVolunteerList(schedule) {
         escapeHtml(formatCallDate(booking.date)) +
         '</td>' +
         '<td style="' + cellStyle + '">' +
-        escapeHtml(booking.personName) +
+        escapeHtml(
+          booking.personName ||
+          roster.find((person) =>
+            String(person.id) === String(booking.personId)
+          )?.name ||
+          'Volunteer name unavailable'
+        ) +
         '</td>' +
         '</tr>'
       );
@@ -685,6 +709,23 @@ async function loadHub(forceRefresh = false, allowFallback = true) {
 
     setServiceAvailability(activeService, true);
     renderHub(data);
+
+    // Read bookings directly so the list is fresh on either service tab.
+    try {
+      const schedule = await apiGet(
+        'callSchedule',
+        { _: Date.now() },
+        true
+      );
+
+      if (loadId !== currentLoad) return;
+
+      hubData.callSchedule = schedule;
+      renderCallDates(schedule);
+    } catch (scheduleError) {
+      if (loadId !== currentLoad) return;
+      renderCallDates(null);
+    }
   } catch (error) {
     if (loadId !== currentLoad) return;
 
